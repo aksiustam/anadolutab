@@ -1,17 +1,18 @@
-const isUserAuthenticated = (req, res, next) => {
-  if (req.user) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-};
+const checkIsInRole =
+  (...roles) =>
+  (req, res, next) => {
+    if (!req.user) {
+      console.log("You must be logged in");
+      return res.sendStatus(401);
+    }
 
-const isAdminAuthenticated = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-};
+    const hasRole = roles.find((role) => req.user.role === role);
+    if (!hasRole) {
+      console.log("You do not have the required role");
+      return res.sendStatus(401);
+    }
 
-module.exports = { isUserAuthenticated, isAdminAuthenticated };
+    return next();
+  };
+
+module.exports = { checkIsInRole };

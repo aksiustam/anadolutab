@@ -1,11 +1,7 @@
 const express = require("express");
 const passport = require("passport");
-
+const { register } = require("../controllers/user.js");
 const router = express.Router();
-
-router.get("/login", (req, res) => {
-  res.send("LOGİN");
-});
 
 router.get("/logout", (req, res) => {
   req.session.destroy((err) => {
@@ -20,6 +16,17 @@ router.get("/logout", (req, res) => {
   });
 });
 
+router.get("/login", (req, res) => {
+  res.send("Login yap");
+});
+router.post("/register", register);
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/auth/login",
+  })
+);
 // passport.authenticate middleware is used here to authenticate the request
 router.get(
   "/google",

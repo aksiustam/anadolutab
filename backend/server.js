@@ -1,5 +1,4 @@
 //#region imports
-
 const path = require("path");
 const express = require("express");
 const http = require("http");
@@ -14,18 +13,23 @@ const db = require("./config/db.js");
 const productRouter = require("./routes/product.js");
 const authRouter = require("./routes/auth.js");
 //#endregion
-
+require("dotenv").config();
 const passport = require("passport");
 const session = require("express-session");
-const { isUserAuthenticated } = require("./middleware/auth.js");
-require("./config/passportSetup.js");
+const initializePassport = require("./config/passportSetup.js");
+//const MongoDBStore = require("connect-mongodb-session")(session);
+
+// const store = new MongoDBStore({
+//   uri: process.env.MONGO_URI, // MongoDB bağlantı URL'si
+//   collection: "sessions", // Oturum verilerinin saklanacağı koleksiyon adı
+// });
 
 //#region config
 //#endregion
-require("dotenv").config();
+
 const port = process.env.PORT || 5000;
 const app = express();
-
+initializePassport(passport);
 db();
 app.use(compression());
 app.use(helmet());

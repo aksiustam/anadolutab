@@ -4,13 +4,29 @@ const cloudinary = require("cloudinary").v2;
 
 const allProducts = async (req, res) => {
   try {
-    /*
-    const productFilter = new ProductFilter(Product.find(), req.query)
-      .search()
-      .filter();
-    const products = await productFilter.query();
-*/
-    const products = await Product.find();
+    let category = req.query.category || "All";
+
+    const categoryMappings = {
+      sabit: "Sabit Yağlar",
+      ucucu: "Uçucu Yağlar",
+      drog: "Droglar",
+      tohum: "Tohumlar",
+      baharat: "Baharatlar",
+      diger: "Diğer Kategoriler",
+    };
+    category === "All"
+      ? (category = Object.values(categoryMappings))
+      : (category = req.query.category
+          .split(",")
+          .map((item) => categoryMappings[item]));
+
+    const products = await Product.find(
+      {},
+      { name: 1, latinname: 1, usedtype: 1, ingredient: 1, price: 1 }
+    )
+      .where("category")
+      .in([...category]);
+
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -19,7 +35,7 @@ const allProducts = async (req, res) => {
 
 const adminProducts = async (req, res, next) => {
   try {
-    const product = await Product.find();
+    const products = await Product.find();
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
