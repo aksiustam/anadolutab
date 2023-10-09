@@ -9,41 +9,41 @@ const Sidebar = () => {
         <div className="mt-10 mx-5">
           <Outlet />
         </div>
-
+        {/* ÜYE OLMAYANLAR GÖRMEYECEKKKKK  Üye Editor Firma Admin */}
         <div className="sm:flex hidden mt-10 mx-5 ">
           <div className="flex flex-col items_center justify-center sm:w-[250px] h-fit p-5  bg-gray-100 border-2 ">
-            <div className="text-2xl text-center">Sektörden Haberler</div>
+            <div className="text-2xl text-center">Sektöre Ulaşım</div>
 
             <div className="flex items-start m-3">
               <ul>
                 <li className="flex items-center justify-center">
                   <BsDot />
-                  Code 1
+                  Sektör Firmaları
+                  {/* Kişiye özel sayfalı FİRMALARLA ALAKALI SAYFALAR + Resim + Haberlere Benzeyecek + kategoriler ayrılacak + filtreleme*/}
                 </li>
                 <li className="flex items-center justify-center">
                   <BsDot />
-                  Code 2
-                </li>
-                <li className="flex items-center justify-center">
-                  <BsDot />
-                  Code 3
+                  Sektör Akademisyenleri
+                  {/* Tıbbı bitkilerle alakalı kişileri sayfalayan Ezcacılar ziraatçılar botanikçiler diğer profil sayfaları Köşe yazısı isterse  */}
                 </li>
               </ul>
             </div>
-            <div className="text-2xl text-center mt-3">Sektörden Haberler</div>
+            <div className="text-2xl text-center mt-3">Haberler</div>
             <div className="flex items-start m-3">
               <ul>
                 <li className="flex items-center justify-center">
                   <BsDot />
-                  Code 1
+                  Sektörden Haberler {/*  Sözcünün haberler Slideri  */}
                 </li>
                 <li className="flex items-center justify-center">
                   <BsDot />
-                  Code 2
+                  KöşeYazıları{" "}
+                  {/*  Köşe yazıları filtreleme ilk son tarih ismi yazı konusu en çok izlenen  */}
                 </li>
                 <li className="flex items-center justify-center">
                   <BsDot />
-                  Code 3
+                  Bilimsel Makaleler{" "}
+                  {/*  Dergipark Api sindan datalar gelsin */}
                 </li>
               </ul>
             </div>

@@ -1,36 +1,26 @@
 const User = require("../models/user.js");
-const bcrypt = require("bcrypt");
 
-const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  const user = await User.findOne(email);
-  if (user) {
-    return res
-      .status(500)
-      .json({ message: "Böyle bir kullanıcı zaten var !!!" });
-  }
-  if (password.length < 6) {
-    return res
-      .status(500)
-      .json({ message: "Şifre 6 karakterden küçük olamaz" });
-  }
+const userDetail = async (req, res) => {
+  const user = await User.findById(req.session.passport.user);
+  res.status(200).json(user.name);
 
-  const passwordhash = await bcrypt.hash(password, 10);
+  // await User.findOne(
+  //   { email: req.session.passport.user.email },
+  //   function (err, user) {
+  //     if (err) console.log(err);
 
-  User.create({
-    name: name,
-    email: email,
-    password: passwordhash,
-  }).save();
+  //     const { first_name, last_name } = user;
 
-  return res.status(200).json("User created");
+  //     res.status(200).send({
+  //       first_name,
+  //       last_name,
+  //     });
+  //   }
+  // );
 };
-
-const login = async (req, res) => {};
-const logout = async (req, res) => {};
 
 const forgotPassword = async (req, res) => {};
 
 const resetPassword = async (req, res) => {};
 
-module.exports = { register, login, forgotPassword, resetPassword, logout };
+module.exports = { userDetail, forgotPassword, resetPassword };

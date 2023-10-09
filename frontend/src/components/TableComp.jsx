@@ -27,7 +27,7 @@ import { Link } from "react-router-dom";
 const TableComp = (params) => {
   const { activetable } = params;
   const dispatch = useDispatch();
-
+ // NAME LATİNNAME ARATMA 
   const { products, loading } = useSelector((state) => state.products);
   const data = { nodes: products };
 

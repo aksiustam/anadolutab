@@ -27,12 +27,15 @@ const userSchema = new mongoose.Schema(
         type: String,
       },
     },
+    isPasswordUsed: { type: Boolean },
+    isAdressUsed: { type: Boolean },
+    isRoleUsed: { type: Boolean },
     role: {
       type: String,
       default: "user",
     },
   },
-  { timestamps: true }
+  { collection: "User", timestamps: true }
 );
 
 module.exports = mongoose.model("User", userSchema);

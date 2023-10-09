@@ -1,69 +1,34 @@
-const GoogleStrategy = require("passport-google-oauth20");
-const LocalStrategy = require("passport-local");
-const bcrypt = require("bcrypt");
 //const FacebookStrategy = require("passport-facebook");
 //const InstagramStrategy = require("passport-instagram");
-
 const User = require("../models/user.js");
-
 function initialize(passport) {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id).then((user) => {
-      done(null, user);
-    });
+  passport.deserializeUser(async (id, done) => {
+    const user = await User.findById(id);
+    done(null, user);
   });
 
-  const authenticateUser = async (email, password, done) => {
-    console.log(email, password);
-    const user = User.findOne(email);
-    if (user == null) {
-      return done(null, false, { message: "Bu emailde User bulunamadı." });
-    }
-    try {
-      if (await bcrypt.compare(password, user.password)) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: "Şifre hatalı." });
-      }
-    } catch (e) {
-      return done(e);
-    }
-  };
+  // passport.serializeUser((user, done) => {
+  //   done(null, user.id);
+  // });
 
-  passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
-  //hey
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/auth/google/callback",
-      },
-      function (accessToken, refreshToken, profile, cbdone) {
-        // passport Callback function
-        User.findOne({ googleId: profile.id }).then((currentUser) => {
-          if (currentUser) {
-            cbdone(null, currentUser);
-          } else {
-            new User({
-              name: profile.displayName,
-              email: profile.emails[0].value,
-              googleId: profile.id,
-              password: null,
-            })
-              .save()
-              .then((newUser) => {
-                cbdone(null, newUser);
-              });
-          }
-        });
-      }
-    )
-  );
+  // passport.deserializeUser((id, done) => {
+  //   User.findById(id).then((user) => {
+  //     done(null, user);
+  //   });
+  // });
+
+  //Requiring Login - Register strategy files
+  const LoginStrategy = require("./passport/LoginStrategy.js");
+  const RegisterStrategy = require("./passport/RegisterStrategy.js");
+  const GoogleStrategy = require("./passport/GoogleStrategy.js");
+  //Using the above
+  passport.use("local-login", LoginStrategy);
+  passport.use("local-register", RegisterStrategy);
+  passport.use("google", GoogleStrategy);
 }
 module.exports = initialize;
 // Strategy config

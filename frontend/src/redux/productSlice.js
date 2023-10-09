@@ -7,15 +7,17 @@ const initialState = {
 };
 
 export const getProducts = createAsyncThunk("products", async (category) => {
+  //
+  //`http://localhost:5000/products?category=${category}`
   const response = await fetch(
-    `http://localhost:5000/products?category=${category}`
+    `https://www.api.anadolutab.com/products?category=${category}`
   );
 
   return await response.json();
 });
 
 export const getProductDetail = createAsyncThunk("product", async (id) => {
-  const response = await fetch(`http://localhost:5000/product/${id}`);
+  const response = await fetch(`https://www.api.anadolutab.com/product/${id}`);
 
   return await response.json();
 });

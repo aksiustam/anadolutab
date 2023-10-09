@@ -3,7 +3,7 @@ import React from "react";
 const EditorCard = (params) => {
   const { editor } = params;
   return (
-    <div className="flex flex-col items-center justify-center w-[250px] p-3 border gap-3 cursor-pointer">
+    <div className="flex flex-col items-center justify-center w-[250px] p-3 border gap-3 cursor-pointer bg-slate-100">
       <div className="mb-5 border border-stone-500 p-3 rounded-full">
         <img
           className="w-32 h-32"

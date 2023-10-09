@@ -1,6 +1,5 @@
 const express = require("express");
 const passport = require("passport");
-const { register } = require("../controllers/user.js");
 const router = express.Router();
 
 router.get("/logout", (req, res) => {
@@ -9,29 +8,62 @@ router.get("/logout", (req, res) => {
       console.log("Error while destroying session:", err);
     } else {
       req.logout(() => {
-        console.log("You are logged out");
-        res.redirect("/");
+        return res.json({ message: "You are logged out" });
       });
     }
   });
 });
 
-router.get("/login", (req, res) => {
-  res.send("Login yap");
+//Login passport authentication
+router.post("/login", function (req, res) {
+  passport.authenticate("local-login", function (error, user, info) {
+    if (error) {
+      return res.status(500).json({
+        message: error || "Something happend",
+        error: error.message || "Server error",
+      });
+    }
+
+    req.login(user, function (error, data) {
+      if (error) {
+        return res.status(500).json({
+          message: error || "Something happend",
+          error: error.message || "Server error",
+        });
+      }
+    });
+
+    user.isAuthenticated = true;
+    return res.json(user);
+  })(req, res);
 });
-router.post("/register", register);
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/auth/login",
-  })
-);
+
+//Register passport authentication
+router.post("/register", (req, res) => {
+  passport.authenticate("local-register", function (error, user, info) {
+    if (error) {
+      return res.status(500).json({
+        message: error || "Something happend",
+        error: error.message || "Server error",
+      });
+    }
+    req.login(user, function (error, data) {
+      if (error) {
+        return res.status(500).json({
+          message: error || "Something happend",
+          error: error.message || "Server error",
+        });
+      }
+      return res.json(user);
+    });
+  })(req, res);
+});
+
 // passport.authenticate middleware is used here to authenticate the request
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["profile"], // Used to specify the required data
+    scope: ["profile", "email"], // Used to specify the required data
   })
 );
 
@@ -40,11 +72,11 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/auth/login",
+    failureRedirect: "/",
     failureMessage: true,
   }),
   function (req, res) {
-    res.redirect("/");
+    return res.json(req.user);
   }
 );
 
