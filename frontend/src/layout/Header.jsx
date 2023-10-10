@@ -1,9 +1,9 @@
-import React, { useState, createElement, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../Public/logo.jpg";
 import {
   Navbar,
-  MobileNav,
+  Collapse,
   Typography,
   Button,
   Menu,
@@ -11,17 +11,18 @@ import {
   MenuList,
   MenuItem,
   Avatar,
-  Card,
   IconButton,
 } from "@material-tailwind/react";
 import {
   UserCircleIcon,
-  Square3Stack3DIcon,
+  HomeIcon,
+  InformationCircleIcon,
+  PhoneIcon,
+  ChartBarIcon,
   ChevronDownIcon,
   NewspaperIcon,
   EnvelopeIcon,
   PowerIcon,
-  RocketLaunchIcon,
   Bars3Icon,
 } from "@heroicons/react/24/outline";
 
@@ -58,10 +59,10 @@ function ProfileMenu() {
           />
         </Button>
       </MenuHandler>
-      <MenuList className="p-3 bg-gray-300">
+      <MenuList className="p-3 bg-green-700 border-none">
         <MenuItem
           onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
         >
           <UserCircleIcon className="h-6 w-6" />
           <NavLink to={"/Profil"} className={"text-lg"}>
@@ -70,7 +71,7 @@ function ProfileMenu() {
         </MenuItem>
         <MenuItem
           onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
         >
           <EnvelopeIcon className="h-6 w-6" />
           <NavLink to={"/Profil/Mesajlar"} className={"text-lg"}>
@@ -79,7 +80,7 @@ function ProfileMenu() {
         </MenuItem>
         <MenuItem
           onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
         >
           <NewspaperIcon className="h-6 w-6" />
           <NavLink to={"/Profil/Makale"} className={"text-lg"}>
@@ -88,7 +89,7 @@ function ProfileMenu() {
         </MenuItem>
         <MenuItem
           onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
         >
           <PowerIcon className="h-6 w-6" />
           <NavLink to={"/Çıkış"} className={"text-lg"}>
@@ -111,7 +112,7 @@ function NavListMenu() {
         <MenuHandler>
           <Typography as="a" variant="small" className="font-normal">
             <MenuItem className="hidden items-center gap-2  lg:flex lg:rounded-full">
-              <Square3Stack3DIcon className="h-[18px] w-[18px]" /> Haberler
+              <NewspaperIcon className="h-[18px] w-[18px]" /> Haberler
               <ChevronDownIcon
                 strokeWidth={2}
                 className={`h-3 w-3 transition-transform ${
@@ -148,7 +149,7 @@ function NavListMenu() {
         </MenuList>
       </Menu>
       <MenuItem className="flex -mt-3 items-center gap-2 text-blue-gray-900 lg:hidden">
-        <Square3Stack3DIcon className="h-[18px] w-[18px]" /> Haberler
+        <NewspaperIcon className="h-[18px] w-[18px]" /> Haberler
       </MenuItem>
       <ul className="ml-10 flex w-full flex-col gap-1 lg:hidden">
         <MenuItem>
@@ -184,7 +185,7 @@ function NavList() {
       <Typography as="a" variant="small" className="font-normal">
         <NavLink to={"/"}>
           <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <UserCircleIcon className="h-[18px] w-[18px]" />
+            <HomeIcon className="h-[18px] w-[18px]" />
             Anasayfa
           </MenuItem>
         </NavLink>
@@ -193,7 +194,7 @@ function NavList() {
       <Typography as="a" variant="small" className="font-normal">
         <NavLink to={"/Hakkımızda"}>
           <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <UserCircleIcon className="h-[18px] w-[18px]" />
+            <InformationCircleIcon className="h-[18px] w-[18px]" />
             Hakkımızda
           </MenuItem>
         </NavLink>
@@ -204,7 +205,7 @@ function NavList() {
       <Typography as="a" variant="small" className="font-normal">
         <NavLink to={"/Borsa"}>
           <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <UserCircleIcon className="h-[18px] w-[18px]" />
+            <ChartBarIcon className="h-[18px] w-[18px]" />
             Borsa
           </MenuItem>
         </NavLink>
@@ -212,7 +213,7 @@ function NavList() {
       <Typography as="a" variant="small" className="font-normal">
         <NavLink to={"/İletişim"}>
           <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <UserCircleIcon className="h-[18px] w-[18px]" />
+            <PhoneIcon className="h-[18px] w-[18px]" />
             İletişim
           </MenuItem>
         </NavLink>
@@ -270,9 +271,9 @@ function ComplexNavbar() {
         </IconButton>
         <ProfileMenu />
       </div>
-      <MobileNav open={isNavOpen}>
+      <Collapse open={isNavOpen}>
         <NavList />
-      </MobileNav>
+      </Collapse>
     </Navbar>
   );
 }
