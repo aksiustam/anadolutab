@@ -5,6 +5,7 @@
   "proxy": "http://localhost:5000",
   "dependencies": {
     "@emotion/react": "^11.11.1",
+    "@heroicons/react": "^2.0.18",
     "@material-tailwind/react": "^2.1.2",
     "@reduxjs/toolkit": "^1.9.6",
     "@table-library/react-table-library": "^4.1.7",

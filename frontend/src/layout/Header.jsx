@@ -1,171 +1,279 @@
-import React, { useState } from "react";
+import React, { useState, createElement, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { AiOutlineClose } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
 import logo from "../Public/logo.jpg";
-
-export const navLinks = [
-  {
-    id: "anasayfa",
-    title: "Anasayfa",
-    to: "/",
-  },
-  {
-    id: "hakkımızda",
-    title: "Hakkımızda",
-    to: "/Hakkımızda",
-  },
-  {
-    id: "haberler",
-    title: "Haberler",
-    to: "/Haberler",
-  },
-  {
-    id: "borsa",
-    title: "Borsa",
-    to: "/Borsa",
-  },
-  {
-    id: "iletişim",
-    title: "İletişim",
-    to: "/İletişim",
-  },
-];
-
-export const profileLinks = [
-  { id: "profil", title: "Profil", to: "/profil" },
-  { id: "admin", title: "Admin", to: "/admin" },
-  { id: "çıkış", title: "Çıkış", to: "/logout" },
-];
+import {
+  Navbar,
+  MobileNav,
+  Typography,
+  Button,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+  Avatar,
+  Card,
+  IconButton,
+} from "@material-tailwind/react";
+import {
+  UserCircleIcon,
+  Square3Stack3DIcon,
+  ChevronDownIcon,
+  NewspaperIcon,
+  EnvelopeIcon,
+  PowerIcon,
+  RocketLaunchIcon,
+  Bars3Icon,
+} from "@heroicons/react/24/outline";
 
 const Header = () => {
-  const [openProfile, setOpenProfile] = useState(false);
-  const [active, setActive] = useState("Anasayfa");
-  const [toggle, setToggle] = useState(false);
-
-  //w-full flex py-6 justify-between items-center navbar
-  //bg-green-500 h-16 px-5 flex items-center justify-between
-  return (
-    <div className="w-full flex py-5 justify-between items-center navbar">
-      <div className="flex flex-col relative items-center  justify-start">
-        <h1 className="sm:absolute text-3xl text-white mr-5 ">
-          <img className="w-24" src={logo} alt="logo" />
-        </h1>
-        <div className="text-xl sm:flex flex-col  hidden text-left mr-5">
-          <div>Anadolu Tıbbi</div>
-          <div>Aromatik Bitkiler</div>
-        </div>
-      </div>
-      {/* Desktop Navigation */}
-      <ul className="list-none sm:flex hidden justify-end items-center flex-1">
-        {navLinks.map((nav, index) => (
-          <li
-            key={nav.id}
-            className={`font-poppins font-normal cursor-pointer text-[16px] ${
-              active === nav.title ? "text-white" : "text-dimWhite"
-            } ${index === navLinks.length - 1 ? "mr-0" : "mr-6"}`}
-            onClick={() => setActive(nav.title)}
-          >
-            <NavLink to={nav.to}>{nav.title}</NavLink>
-          </li>
-        ))}
-      </ul>
-
-      {/* Mobile Navigation */}
-      <div className="sm:hidden flex flex-1 justify-end items-center">
-        {toggle ? (
-          <AiOutlineClose
-            size={36}
-            onClick={() => {
-              setToggle(!toggle);
-              setOpenProfile(false);
-            }}
-          />
-        ) : (
-          <GiHamburgerMenu
-            size={36}
-            onClick={() => {
-              setToggle(!toggle);
-              setOpenProfile(false);
-            }}
-          />
-        )}
-
-        {/* Sidebar */}
-        <div
-          className={`${
-            !toggle ? "hidden" : "flex"
-          } p-6 bg-black absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar`}
-        >
-          <ul className="list-none flex justify-end items-start flex-1 flex-col">
-            {navLinks.map((nav, index) => (
-              <li
-                key={nav.id}
-                className={`font-poppins font-medium cursor-pointer text-[16px] ${
-                  active === nav.title ? "text-white" : "text-dimWhite"
-                } ${index === navLinks.length - 1 ? "mb-0" : "mb-4"}`}
-              >
-                <NavLink
-                  to={nav.to}
-                  onClick={() => {
-                    setActive(nav.title);
-                    setToggle(false);
-                    setOpenProfile(false);
-                  }}
-                >
-                  {nav.title}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Profile  */}
-
-      <CgProfile
-        className="sm:left-4 right-24 relative "
-        size={36}
-        color="white"
-        onClick={() => {
-          setOpenProfile(!openProfile);
-          setToggle(false);
-        }}
-      />
-
-      <div
-        className={`${
-          !openProfile ? "hidden" : "flex"
-        } p-6 bg-black absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar`}
-      >
-        <ul className="list-none flex justify-end items-start flex-1 flex-col">
-          {profileLinks.map((nav, index) => (
-            <li
-              key={nav.id}
-              className={`font-poppins font-medium cursor-pointer text-[16px] text-dimWhite
-                ${index === profileLinks.length - 1 ? "mb-0" : "mb-4"}`}
-            >
-              <NavLink to={nav.to}>{nav.title}</NavLink>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* <div className="sm:block sm:left-2 right-24 relative ">
-        
-        {openMenu && (
-          <div className="absolute right-0 mt-3 w-[200px] bg-black">
-            {menuItems.map((item, i) => (
-              <div key={i} className="px-2 py-1 hover:bg-gray-200">
-                {item.name}
-              </div>
-            ))}
-          </div>
-        )}
-      </div> */}
-    </div>
-  );
+  return <ComplexNavbar />;
 };
 
+// profile menu component
+function ProfileMenu() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const closeMenu = () => setIsMenuOpen(false);
+
+  return (
+    <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
+      <MenuHandler>
+        <Button
+          variant="text"
+          color="blue-gray"
+          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+        >
+          <Avatar
+            variant="circular"
+            size="sm"
+            alt="tania andrew"
+            className="rounded-full border border-gray-900 p-0.5 w-[60px]"
+            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+          />
+          <ChevronDownIcon
+            strokeWidth={5.5}
+            className={`h-12 w-4 transition-transform ${
+              isMenuOpen ? "rotate-180" : ""
+            }`}
+          />
+        </Button>
+      </MenuHandler>
+      <MenuList className="p-3 bg-gray-300">
+        <MenuItem
+          onClick={closeMenu}
+          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+        >
+          <UserCircleIcon className="h-6 w-6" />
+          <NavLink to={"/Profil"} className={"text-lg"}>
+            Profil
+          </NavLink>
+        </MenuItem>
+        <MenuItem
+          onClick={closeMenu}
+          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+        >
+          <EnvelopeIcon className="h-6 w-6" />
+          <NavLink to={"/Profil/Mesajlar"} className={"text-lg"}>
+            Mesajlar
+          </NavLink>
+        </MenuItem>
+        <MenuItem
+          onClick={closeMenu}
+          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+        >
+          <NewspaperIcon className="h-6 w-6" />
+          <NavLink to={"/Profil/Makale"} className={"text-lg"}>
+            Makaleler
+          </NavLink>
+        </MenuItem>
+        <MenuItem
+          onClick={closeMenu}
+          className={`flex items-center my-1 gap-3 rounded hover:bg-gray-200`}
+        >
+          <PowerIcon className="h-6 w-6" />
+          <NavLink to={"/Çıkış"} className={"text-lg"}>
+            Çıkış
+          </NavLink>
+        </MenuItem>
+      </MenuList>
+    </Menu>
+  );
+}
+
+// nav list menu
+
+function NavListMenu() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <React.Fragment>
+      <Menu allowHover open={isMenuOpen} handler={setIsMenuOpen}>
+        <MenuHandler>
+          <Typography as="a" variant="small" className="font-normal">
+            <MenuItem className="hidden items-center gap-2  lg:flex lg:rounded-full">
+              <Square3Stack3DIcon className="h-[18px] w-[18px]" /> Haberler
+              <ChevronDownIcon
+                strokeWidth={2}
+                className={`h-3 w-3 transition-transform ${
+                  isMenuOpen ? "rotate-180" : ""
+                }`}
+              />
+            </MenuItem>
+          </Typography>
+        </MenuHandler>
+        <MenuList className="hidden gap-3 bg-green-700 lg:flex border-none">
+          <ul className=" flex w-full flex-col gap-3 mt-1">
+            <MenuItem>
+              <NavLink to={"/Haberler"}>
+                <Typography className="font-normal mb-1 text-left hover:text-gray-100 text-gray-200">
+                  Sektörden Haberler
+                </Typography>
+              </NavLink>
+            </MenuItem>
+            <MenuItem>
+              <NavLink to={"/Haberler"}>
+                <Typography className="font-normal mb-1 text-left hover:text-gray-100 text-gray-200">
+                  Köşe Yazıları
+                </Typography>
+              </NavLink>
+            </MenuItem>
+            <MenuItem>
+              <NavLink to={"/Haberler"}>
+                <Typography className="font-normal mb-1 text-left hover:text-gray-100 text-gray-200">
+                  Bilimsel Makaleler
+                </Typography>
+              </NavLink>
+            </MenuItem>
+          </ul>
+        </MenuList>
+      </Menu>
+      <MenuItem className="flex -mt-3 items-center gap-2 text-blue-gray-900 lg:hidden">
+        <Square3Stack3DIcon className="h-[18px] w-[18px]" /> Haberler
+      </MenuItem>
+      <ul className="ml-10 flex w-full flex-col gap-1 lg:hidden">
+        <MenuItem>
+          <NavLink to={"/Haberler"}>
+            <Typography className="font-normal mb-1 text-left text-gray-200">
+              Sektörden Haberler
+            </Typography>
+          </NavLink>
+        </MenuItem>
+        <MenuItem>
+          <NavLink to={"/Haberler"}>
+            <Typography className="font-normal mb-1 text-left  text-gray-200">
+              Köşe Yazıları
+            </Typography>
+          </NavLink>
+        </MenuItem>
+        <MenuItem>
+          <NavLink to={"/Haberler"}>
+            <Typography className="font-normal mb-1 text-left  text-gray-200">
+              Bilimsel Makaleler
+            </Typography>
+          </NavLink>
+        </MenuItem>
+      </ul>
+    </React.Fragment>
+  );
+}
+// nav list component
+
+function NavList() {
+  return (
+    <ul className="mb-4 mt-2 gap-2 flex flex-col lg:gap-3  lg:mb-0 lg:mt-0 lg:flex-row lg:items-start ">
+      <Typography as="a" variant="small" className="font-normal">
+        <NavLink to={"/"}>
+          <MenuItem className="flex items-center gap-2 lg:rounded-full">
+            <UserCircleIcon className="h-[18px] w-[18px]" />
+            Anasayfa
+          </MenuItem>
+        </NavLink>
+      </Typography>
+
+      <Typography as="a" variant="small" className="font-normal">
+        <NavLink to={"/Hakkımızda"}>
+          <MenuItem className="flex items-center gap-2 lg:rounded-full">
+            <UserCircleIcon className="h-[18px] w-[18px]" />
+            Hakkımızda
+          </MenuItem>
+        </NavLink>
+      </Typography>
+
+      <NavListMenu />
+
+      <Typography as="a" variant="small" className="font-normal">
+        <NavLink to={"/Borsa"}>
+          <MenuItem className="flex items-center gap-2 lg:rounded-full">
+            <UserCircleIcon className="h-[18px] w-[18px]" />
+            Borsa
+          </MenuItem>
+        </NavLink>
+      </Typography>
+      <Typography as="a" variant="small" className="font-normal">
+        <NavLink to={"/İletişim"}>
+          <MenuItem className="flex items-center gap-2 lg:rounded-full">
+            <UserCircleIcon className="h-[18px] w-[18px]" />
+            İletişim
+          </MenuItem>
+        </NavLink>
+      </Typography>
+    </ul>
+  );
+}
+
+function ComplexNavbar() {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
+  const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
+
+  useEffect(() => {
+    window.addEventListener(
+      "resize",
+      () => window.innerWidth >= 960 && setIsNavOpen(false)
+    );
+  }, []);
+
+  return (
+    <Navbar className="bg-green-800 mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6">
+      <div className="relative mx-auto flex items-center text-gray-200 ">
+        <NavLink to={"/"}>
+          <div className="flex flex-col relative items-center justify-center">
+            <img className="w-24 absolute  ml-5" src={logo} alt="logo" />
+            <div className="flex flex-col ml-5">
+              <Typography
+                as="a"
+                className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-left"
+              >
+                Anadolu Tıbbi
+              </Typography>
+              <Typography
+                as="a"
+                className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-left"
+              >
+                Aromatik Bitkiler
+              </Typography>
+            </div>
+          </div>
+        </NavLink>
+        <div className="absolute  top-2/4 -right-12 hidden -translate-x-1/4 -translate-y-2/4 lg:block">
+          <NavList />
+        </div>
+
+        <IconButton
+          size="lg"
+          color="white"
+          variant="text"
+          onClick={toggleIsNavOpen}
+          className="flex items-center justify-center ml-auto mr-5 lg:hidden"
+        >
+          <Bars3Icon className="h-8 w-8" />
+        </IconButton>
+        <ProfileMenu />
+      </div>
+      <MobileNav open={isNavOpen}>
+        <NavList />
+      </MobileNav>
+    </Navbar>
+  );
+}
 export default Header;

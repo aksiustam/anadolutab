@@ -14,13 +14,7 @@ import Haberler from "./pages/Main/Haberler";
 function App() {
   return (
     <Router>
-      <div className="bg-green-800 w-full overflow-hidden">
-        <div className={`sm:px-10 pl-6 flex justify-center items-center`}>
-          <div className={`xl:max-w-[1280px] w-full`}>
-            <Header />
-          </div>
-        </div>
-      </div>
+      <Header />
 
       <Routes>
         <Route path="/" element={<Sidebar />}>
