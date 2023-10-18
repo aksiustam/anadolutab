@@ -1,9 +1,10 @@
 //const FacebookStrategy = require("passport-facebook");
 //const InstagramStrategy = require("passport-instagram");
 const User = require("../models/user.js");
+
 function initialize(passport) {
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
   });
 
   passport.deserializeUser(async (id, done) => {
@@ -11,23 +12,13 @@ function initialize(passport) {
     done(null, user);
   });
 
-  // passport.serializeUser((user, done) => {
-  //   done(null, user.id);
-  // });
-
-  // passport.deserializeUser((id, done) => {
-  //   User.findById(id).then((user) => {
-  //     done(null, user);
-  //   });
-  // });
-
   //Requiring Login - Register strategy files
-  const LoginStrategy = require("./passport/LoginStrategy.js");
-  const RegisterStrategy = require("./passport/RegisterStrategy.js");
+
   const GoogleStrategy = require("./passport/GoogleStrategy.js");
+  const JwtStrategy = require("./passport/JwtStrategy.js");
+
   //Using the above
-  passport.use("local-login", LoginStrategy);
-  passport.use("local-register", RegisterStrategy);
+  passport.use("jwt", JwtStrategy);
   passport.use("google", GoogleStrategy);
 }
 module.exports = initialize;

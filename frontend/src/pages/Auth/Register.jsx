@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Input,
@@ -6,47 +6,59 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { NavLink } from "react-router-dom";
-import axios from "axios";
-import { useDispatch } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../../redux/userSlice";
+import { useNavigate } from "react-router-dom";
+
 const Register = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [eError, setEError] = useState();
+  const [check, setCheck] = useState(false);
   const [data, setData] = useState({
     name: "",
     email: "",
     password: "",
-    success: false,
-    error: false,
   });
+  const { isRegAuth, error, loading } = useSelector((state) => state.user);
+  const onSignup = async () => {
+    const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
+    if (!data.email.match(regex)) {
+      setEError("Email yanlış girdiniz");
+      return;
+    }
+    if (data.name === "") {
+      setEError("Ad giriniz");
+      return;
+    }
+    if (data.password === "") {
+      setEError("Şifre Giriniz");
+      return;
+    }
+    if (!check) {
+      setEError("Kutucuğu İşaretleyin");
+      return;
+    }
+
+    setEError(false);
+    dispatch(register(data));
+  };
+  useEffect(() => {
+    if (isRegAuth) {
+      setTimeout(function () {
+        navigate("/auth/login");
+      }, 3000);
+    }
+  }, [navigate, isRegAuth]);
   const onChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
 
-  const onSignup = (e) => {
-    e.preventDefault();
-
-    const { email, password, name } = data;
-    console.log(data);
-    // axios({
-    //   url: "/auth/register",
-    //   method: "POST",
-    //   data: { email, password, first_name, last_name },
-    // })
-    //   .then((res) => {
-    //     window.localStorage.setItem("isAuthenticated", true);
-    //     if (res.status === 200) {
-    //       this.setState({ success: true, error: false });
-    //       this.props.history.push("/");
-    //     }
-    //   })
-    //   .catch(({ response }) => {
-    //     this.setState({ error: response.data.message, success: false });
-    //   });
-  };
   return (
-    <div className="flex items-center justify-center m-5">
+    <div className="flex items-center justify-center">
       <Card color="transparent" shadow={false} className=" p-5 ">
         <Typography variant="h4" color="blue-gray">
           Kayıt Ol
@@ -54,12 +66,17 @@ const Register = () => {
         <Typography color="gray" className="mt-1 font-normal">
           Kullanıcı Bilgilerini Giriniz...
         </Typography>
-        {data.success && "You've registered in successfully"}
-        {data.error}
-        <form
-          className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96"
-          onSubmit={() => onSignup()}
-        >
+        <Typography color="red">
+          {isRegAuth
+            ? "Başarıyla Kaydoldunuz."
+            : loading
+            ? "Loading..."
+            : eError
+            ? eError
+            : error?.message}
+        </Typography>
+
+        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
           <div className="mb-4 flex flex-col gap-6">
             <Input onChange={onChange} name="name" size="lg" label="Ad Soyad" />
             <Input onChange={onChange} name="email" size="lg" label="Email" />
@@ -72,6 +89,7 @@ const Register = () => {
             />
           </div>
           <Checkbox
+            onChange={() => setCheck(!check)}
             label={
               <Typography
                 variant="small"
@@ -79,17 +97,17 @@ const Register = () => {
                 className="flex items-center font-normal"
               >
                 I agree the
-                <a
-                  href="#"
+                <Link
+                  to={"/"}
                   className="font-medium transition-colors hover:text-gray-900"
                 >
                   &nbsp;Terms and Conditions
-                </a>
+                </Link>
               </Typography>
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth>
+          <Button className="mt-6" fullWidth onClick={onSignup}>
             Kayıt Ol
           </Button>
           <Typography color="gray" className="mt-4 text-center font-normal">

@@ -1,5 +1,5 @@
 //#region imports
-const path = require("path");
+
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -12,27 +12,30 @@ const db = require("./config/db.js");
 
 require("dotenv").config();
 const passport = require("passport");
-const session = require("express-session");
-const initializePassport = require("./config/passportSetup.js");
-const MongoDBStore = require("connect-mongodb-session")(session);
 
-const store = new MongoDBStore({
-  uri: process.env.MONGO_URI,
-  collection: "sessions", // Oturumların saklanacağı koleksiyon adı
-  expires: 1000 * 60 * 60 * 24 * 7, // Oturumların ne kadar süreyle saklanacağını ayarlayın (örneğin, 1 hafta)
-});
+const initializePassport = require("./config/passportSetup.js");
 
 //#endregion
 
 //#region config
 
+//#endregion
 const port = process.env.PORT || 5000;
 const app = express();
 initializePassport(passport);
 db();
 app.use(compression());
 app.use(helmet());
-app.use(cors());
+
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://localhost:3000", "localhost:3000"],
+  methods: "GET,POST,DELETE,PUT",
+  allowedHeaders: ["Content-Type"],
+  exposedHeaders: ["Content-Type"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -44,23 +47,9 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cookieParser());
 
-//cookieSession config
-app.use(
-  session({
-    secret: process.env.COOKIE_KEY,
-    resave: false,
-    saveUninitialized: true,
-    store: store,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // Oturum çerezinin ne kadar süreyle geçerli olacağını ayarlayın (örneğin, 1 hafta)
-    },
-  })
-);
-
 app.use(passport.initialize()); // Used to initialize passport
-app.use(passport.session()); // Used to persist login sessions
 
-//#endregion
+//delete connect-mongodb-session express-session mysql2
 
 const productRouter = require("./routes/product.js");
 const authRouter = require("./routes/auth.js");
@@ -68,6 +57,7 @@ const userRouter = require("./routes/user.js");
 app.use("/", productRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+
 app.get("/", (req, res) => {
   return res.send("Hello world");
 });

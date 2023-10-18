@@ -1,15 +1,22 @@
 const express = require("express");
+const passport = require("passport");
 const {
   forgotPassword,
   resetPassword,
   userDetail,
 } = require("../controllers/user.js");
+const authenticateWithJwt = require("../middleware/jwt.js");
 const { checkIsInRole } = require("../middleware/auth.js");
 const router = express.Router();
 
 router.get("/forgotPass", forgotPassword);
 router.get("/resetPass", resetPassword);
-router.get("/detail", userDetail);
+router.get(
+  "/detail",
+  authenticateWithJwt,
+  checkIsInRole("user", "admin"),
+  userDetail
+);
 
 // router.get("/products", checkIsInRole("user", "admin"), allProducts);
 // router.get("/admin/products", checkIsInRole("admin"), adminProducts);

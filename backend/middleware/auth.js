@@ -1,17 +1,13 @@
+const jwt = require("jsonwebtoken");
+const User = require("../models/user.js");
 const checkIsInRole =
   (...roles) =>
   (req, res, next) => {
-    if (!req.user) {
-      console.log("You must be logged in");
-      return res.sendStatus(401);
-    }
-
     const hasRole = roles.find((role) => req.user.role === role);
-    if (!hasRole) {
-      console.log("You do not have the required role");
-      return res.sendStatus(401);
-    }
 
+    if (!hasRole) {
+      return res.sendStatus(401).end();
+    }
     return next();
   };
 

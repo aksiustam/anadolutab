@@ -1,33 +1,27 @@
-// import jwt from "jsonwebtoken";
-// const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const login = (req, user) => {
+  return new Promise((resolve, reject) => {
+    req.login(user, { session: false }, (err) => {
+      if (err) {
+        return reject(err);
+      }
 
-// const signToken = (user) => {
-//   return jwt.sign({ data: user }, process.env.JWT_SECRET, {
-//     expiresIn: 604800,
-//   });
-// };
-// const hashPassword = async (password) => {
-//   if (!password) {
-//     throw new Error("Password was not provided");
-//   }
-
-//   const salt = await bcrypt.genSalt(10);
-//   return await bcrypt.hash(password, salt);
-// };
-
-// const verifyPassword = async (candidate, actual) => {
-//   return await bcrypt.compare(candidate, actual);
-// };
-
-// const getRedirectUrl = (role) => {
-//   switch (role) {
-//     case ROLES.Admin:
-//       return "/admin-dashboard";
-//     case ROLES.Customer:
-//       return "/customer-dashboard";
-//     default:
-//       return "/";
-//   }
-// };
-
-// export { verifyPassword, hashPassword, signToken, getRedirectUrl };
+      return resolve(signToken(user));
+    });
+  });
+};
+const signToken = (user) => {
+  const data = {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    isPasswordUsed: user.isPasswordUsed,
+    isAdressUsed: user.isAdressUsed,
+    isRoleUsed: user.isRoleUsed,
+    role: user.role,
+  };
+  return jwt.sign({ data: data }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+};
+module.exports = { signToken, login };

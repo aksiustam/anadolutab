@@ -13,27 +13,55 @@ import Sidebar from "./layout/Sidebar";
 import Haberler from "./pages/Main/Haberler";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import AdminHome from "./pages/Admin/AdminHome";
+import Unauthorized from "./pages/Layout/Unauthorized";
+
+import { useEffect } from "react";
+import { refresh, setLoading } from "./redux/userSlice";
+import { useDispatch } from "react-redux";
+import RequireAuth from "./utils/RequireAuth";
+import Loading from "./layout/Loading";
+import { useCookies } from "react-cookie";
 function App() {
+  const dispatch = useDispatch();
+  const [cookies] = useCookies(["jwt"]);
+  useEffect(() => {
+    if (cookies?.jwt) {
+      dispatch(refresh());
+    } else {
+      dispatch(setLoading(false));
+    }
+  }, [dispatch, cookies.jwt]);
+
   return (
     <Router>
-      <Header />
-
-      <Routes>
-        <Route path="/" element={<Sidebar />}>
-          <Route index element={<Home />} />
-          <Route path="Borsa" element={<Borsa />} />
-          <Route path="Hakkımızda" element={<Hakkımızda />} />
-          <Route path="İletişim" element={<İletişim />} />
-          <Route path="Haberler" element={<Haberler />} />
-        </Route>
-        <Route path="/product/:id" element={<Detail />} />
-        <Route path="/Auth">
-          <Route path="Login" element={<Login />} />
-          <Route path="Register" element={<Register />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Footer />
+      <Loading>
+        <Header />
+        <Routes>
+          {/* public routes */}
+          <Route path="/" element={<Sidebar />}>
+            <Route index element={<Home />} />
+            <Route path="Borsa" element={<Borsa />} />
+            <Route path="Hakkımızda" element={<Hakkımızda />} />
+            <Route path="İletişim" element={<İletişim />} />
+            <Route path="Haberler" element={<Haberler />} />
+          </Route>
+          {/* public routes without sidebar */}
+          <Route path="/product/:id" element={<Detail />} />
+          <Route path="/Auth">
+            <Route path="Login" element={<Login />} />
+            <Route path="Register" element={<Register />} />
+          </Route>
+          {/* Admin routes */}
+          <Route element={<RequireAuth allowedRoles={["user"]} />}>
+            <Route path="Admin" element={<AdminHome />} />
+          </Route>
+          {/* Diğer routes */}
+          <Route path="*" element={<NotFound />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
+        </Routes>
+        <Footer />
+      </Loading>
     </Router>
   );
 }

@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema(
     },
     googleId: {
       type: String,
-      unique: true,
     },
     avatar: {
       public_id: {
@@ -27,9 +26,9 @@ const userSchema = new mongoose.Schema(
         type: String,
       },
     },
-    isPasswordUsed: { type: Boolean },
-    isAdressUsed: { type: Boolean },
-    isRoleUsed: { type: Boolean },
+    isPasswordUsed: { type: Boolean, default: false },
+    isAdressUsed: { type: Boolean, default: false },
+    isRoleUsed: { type: Boolean, default: false },
     role: {
       type: String,
       default: "user",
