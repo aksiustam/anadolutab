@@ -54,27 +54,39 @@ const detailProduct = async (req, res) => {
 
 const createProduct = async (req, res, next) => {
   try {
-    let images = [];
-    if (typeof req.body.images === "string") {
-      images.push();
-    } else {
-      images = req.body.images;
-    }
+    console.log(req.body);
+    const product = {
+      name: req.body.name,
+      latinname: req.body.latinname,
+      usedtype: req.body.usedtype,
+      ingredient: req.body.ingredient,
+      description: req.body.description,
+      price: [
+        { date: "2022", priceout: req.body.price2022 },
+        { date: "2023", priceout: req.body.price2023 },
+      ],
+      category: req.body.category,
+    };
+    await Product.create(product);
 
-    let allImage = [];
+    res.status(200).json("Success");
+    // let images = [];
+    // if (typeof req.body.images === "string") {
+    //   images.push();
+    // } else {
+    //   images = req.body.images;
+    // }
 
-    for (let i = 0; i < images.length; i++) {
-      const result = await cloudinary.uploader(images[i], {
-        folder: "products",
-      });
+    // let allImage = [];
 
-      allImage.push({ public_id: result.public_id, url: result.secure_url });
-    }
-    req.body.images = allImage;
+    // for (let i = 0; i < images.length; i++) {
+    //   const result = await cloudinary.uploader(images[i], {
+    //     folder: "products",
+    //   });
 
-    const product = await Product.create(req.body);
-
-    res.status(200).json(product);
+    //   allImage.push({ public_id: result.public_id, url: result.secure_url });
+    // }
+    // req.body.images = allImage;
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -5,13 +5,13 @@ const initialState = {
   token: null,
   error: null,
   loading: false,
-  authloading: true,
+  pageLoading: true,
   isAuth: false,
   isRegAuth: false,
 };
 
 export const register = createAsyncThunk("register", async (data, thunkAPI) => {
-  const response = await fetch("http://localhost:5000/auth/register", {
+  const response = await fetch("https://api.anadolutab.com/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -32,7 +32,7 @@ export const register = createAsyncThunk("register", async (data, thunkAPI) => {
 });
 
 export const login = createAsyncThunk("login", async (data, thunkAPI) => {
-  const response = await fetch("http://localhost:5000/auth/login", {
+  const response = await fetch("https://api.anadolutab.com/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -40,33 +40,16 @@ export const login = createAsyncThunk("login", async (data, thunkAPI) => {
       password: data.password,
     }),
   });
-  console.log(response.status);
+
   if (response.status === 500) {
     const errorData = await response.json();
     return thunkAPI.rejectWithValue(errorData);
   }
   if (response.status === 200) {
     const data = await response.json();
+    localStorage.setItem("jwt", data.token);
+    localStorage.setItem("user", JSON.stringify(data.data));
     return thunkAPI.fulfillWithValue(data);
-  }
-});
-
-export const refresh = createAsyncThunk("refresh", async (thunkAPI) => {
-  const response = await fetch("http://localhost:5000/user/detail", {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-
-  if (response.status === 500 || response.status === 401) {
-    const errorData = await response.json();
-    return thunkAPI.rejectWithValue(errorData);
-  }
-
-  if (response.status === 200) {
-    const data = await response.json();
-
-    return data;
   }
 });
 
@@ -74,8 +57,20 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    setLogout: (state, action) => {
+      state.user = null;
+      state.isAuth = false;
+    },
+    setToken: (state, action) => {
+      state.token = action.payload;
+    },
+    setUser: (state, action) => {
+      const data = JSON.parse(action.payload);
+      state.user = data;
+      state.isAuth = true;
+    },
     setLoading: (state, action) => {
-      state.authloading = action.payload;
+      state.pageLoading = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -110,24 +105,9 @@ export const userSlice = createSlice({
       state.isAuth = false;
       state.error = action.payload;
     });
-    builder.addCase(refresh.pending, (state, action) => {
-      state.authloading = true;
-      state.isAuth = false;
-    });
-    builder.addCase(refresh.fulfilled, (state, action) => {
-      state.isAuth = true;
-      state.error = null;
-      state.authloading = false;
-      state.user = action.payload;
-    });
-    builder.addCase(refresh.rejected, (state, action) => {
-      state.isAuth = false;
-      state.authloading = false;
-      state.error = action.payload;
-    });
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setLoading } = userSlice.actions;
+export const { setLogout, setToken, setUser, setLoading } = userSlice.actions;
 export default userSlice.reducer;

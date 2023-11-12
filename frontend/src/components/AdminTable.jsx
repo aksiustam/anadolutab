@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../redux/productSlice";
+import React, { useEffect, useState } from "react";
 
 import {
   Table,
@@ -16,6 +14,7 @@ import {
   SortToggleType,
 } from "@table-library/react-table-library/sort";
 import { usePagination } from "@table-library/react-table-library/pagination";
+
 import { useTheme } from "@table-library/react-table-library/theme";
 
 import {
@@ -23,23 +22,36 @@ import {
   getTheme,
 } from "@table-library/react-table-library/material-ui";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { Link } from "react-router-dom";
+
+import axios from "axios";
 import { Button, ButtonGroup } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
 
-const TableComp = (params) => {
-  const { activetable } = params;
-  const dispatch = useDispatch();
-  // NAME LATİNNAME ARATMA
-  const { products, loading } = useSelector((state) => state.products);
-
+const AdminTable = () => {
+  const [products, setProducts] = useState();
+  const [activetable, setActiveTable] = useState("sabit");
+  const [error, setError] = useState();
+  const { token } = useSelector((state) => state.user);
+  useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get(`https://api.anadolutab.com/products?category=${activetable}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setProducts(res.data);
+        })
+        .catch((err) => {
+          console.log(err.response);
+          console.log(err.response.data.message);
+        });
+    }
+    fetchData();
+  }, [activetable]);
   const data = { nodes: products };
 
   const materialTheme = getTheme(DEFAULT_OPTIONS);
   const theme = useTheme(materialTheme);
-  //console.log(products);
-  useEffect(() => {
-    dispatch(getProducts(activetable));
-  }, [dispatch, activetable]);
 
   const sort = useSort(
     data,
@@ -82,12 +94,60 @@ const TableComp = (params) => {
   function onPaginationChange(action, state) {
     // console.log(action, state);
   }
+
+  const onDelete = async (id, name) => {
+    await axios
+      .delete(`https://api.anadolutab.com/product/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setError(name + " Adlı " + res.data.message);
+      })
+      .catch((err) => {
+        setError(err.response.data.message);
+      });
+  };
   return (
-    <div className="flex items-center justify-center">
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="border border-black">
+    <div className="flex flex-col">
+      <div className="flex flex-wrap items-center justify-evenly">
+        <div
+          onClick={() => setActiveTable("sabit")}
+          className={`${
+            activetable === "sabit" ? "bg-green-600" : "bg-green-800"
+          } m-3 px-3 py-3 rounded-full cursor-pointer border-2 border-grey text-2xl text-white`}
+        >
+          Sabit Yağlar
+        </div>
+        <div
+          onClick={() => setActiveTable("ucucu")}
+          className={`${
+            activetable === "ucucu" ? "bg-green-600" : "bg-green-800"
+          } m-3 px-3 py-3 rounded-full cursor-pointer border-2 border-grey text-2xl text-white`}
+        >
+          Uçucu Yağlar
+        </div>
+        <div
+          onClick={() => setActiveTable("drog")}
+          className={`${
+            activetable === "drog" ? "bg-green-600" : "bg-green-800"
+          } m-3 px-3 py-3 rounded-full cursor-pointer border-2 border-grey text-2xl text-white`}
+        >
+          Droglar
+        </div>
+        <div
+          onClick={() => setActiveTable("tohum")}
+          className={`${
+            activetable === "tohum" ? "bg-green-600" : "bg-green-800"
+          } m-3 px-3 py-3 rounded-full cursor-pointer border-2 border-grey text-2xl text-white`}
+        >
+          Tohumlar
+        </div>
+      </div>
+      <div className="text-red-900 flex items-center justify-center text-lg">
+        {error}
+      </div>
+      {products ? (
+        <div className="border border-black m-5">
           <Table data={data} sort={sort} theme={theme} pagination={pagination}>
             {(tableList) => (
               <>
@@ -117,12 +177,12 @@ const TableComp = (params) => {
                       <Cell>{item.price[0].priceout}</Cell>
                       <Cell>{item.price[1].priceout}</Cell>
                       <Cell>
-                        <Link
-                          className="text-blue-700"
-                          to={`/product/${item._id}`}
+                        <Button
+                          color="red"
+                          onClick={() => onDelete(item._id, item.name)}
                         >
-                          Git
-                        </Link>
+                          Sil
+                        </Button>
                       </Cell>
                     </Row>
                   ))}
@@ -157,9 +217,11 @@ const TableComp = (params) => {
 
           <br />
         </div>
+      ) : (
+        "Loading"
       )}
     </div>
   );
 };
 
-export default TableComp;
+export default AdminTable;

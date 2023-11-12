@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getProductDetail } from "../redux/productSlice";
 import Slider from "react-slick";
-import Button from "../components/Button";
-
+import { Button, Typography } from "@material-tailwind/react";
+import fidan from "../Public/fidan.jpg";
 const Detail = () => {
   const { id } = useParams();
   const { product } = useSelector((state) => state.products);
-  const [quantity, setQuantity] = useState(1);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (id) dispatch(getProductDetail(id));
+    dispatch(getProductDetail(id));
   }, [dispatch, id]);
 
   const settings = {
@@ -23,47 +23,53 @@ const Detail = () => {
     slidesToScroll: 1,
   };
 
-  const addBasket = () => {};
-
-  const decrement = () => {
-    setQuantity(quantity - 1);
-  };
-  const increment = () => {
-    setQuantity(quantity + 1);
-  };
-
-  console.log(product);
   return (
-    <div className="">
-      <div className="flex justify-center mt-4 gap-7">
+    <div className="flex flex-row justify-center m-4">
+      <div className="flex justify-center items-center m-4 ">
         {product && (
-          <div className="w-[650px]">
+          <div className="w-[450px]">
             <Slider {...settings}>
-              {product?.images?.map((image, i) => (
-                <img key={i} src={image.url} alt="" />
-              ))}
+              <img
+                className="h-72 w-full object-cover object-center"
+                src={fidan}
+                alt=""
+              />
+              <img
+                className="h-72 w-full object-cover object-center"
+                src={fidan}
+                alt=""
+              />
             </Slider>
           </div>
         )}
-        <div className="space-y-3">
-          <div className="text-3xl">{product?.name}</div>
-          <div className="text-xl">{product?.latinname}</div>
-          {product?.stock > 0 ? (
-            <div className="text-xl">Stok Sayısı: {product?.stock}</div>
-          ) : (
-            <div>Ürün Stoklarda yoktur.</div>
-          )}
-          <div className="text-xl">Kategori : {product?.category}</div>
-          <div className="flex items-center gap-5">
-            <div onClick={decrement} className="text-3xl cursor-pointer">
-              -
-            </div>
-            <div className="text-2xl">{quantity}</div>
-            <div onClick={increment} className="text-3xl cursor-pointer">
-              +
-            </div>
-          </div>
-          <Button name={"Sepete Ekle"} onClick={addBasket} />
+      </div>
+      <div className="flex flex-col m-4 gap-3">
+        <Typography variant="h3">{product?.name}</Typography>
+        <div className="flex items-center  gap-3">
+          <Typography>Latin Adı : {product?.latinname}</Typography>
+          <Typography>Kategori : {product?.category}</Typography>
+        </div>
+        <div className="flex items-center  gap-3">
+          <Typography>Ingredient : {product?.ingredient}</Typography>
+          <Typography>Usedtype : {product?.usedtype}</Typography>
+        </div>
+        <div className="flex items-center  gap-3">
+          {product?.price?.map((item, i) => (
+            <Typography key={i}>
+              {i + 2022} Fiyatı : {item.priceout} TL
+            </Typography>
+          ))}
+        </div>
+
+        {product?.stock > 0 ? (
+          <div className="text-xl">Stok Sayısı: {product?.stock}</div>
+        ) : (
+          <div>Ürün Stoklarda yoktur.</div>
+        )}
+        <Typography variant="paragraph">{product?.description}</Typography>
+
+        <div>
+          <Button>Sepete Ekle</Button>
         </div>
       </div>
     </div>

@@ -1,7 +1,12 @@
 import React from "react";
 
+import TodoComp from "../../components/TodoComp";
 const AdminHome = () => {
-  return <div>ADMİNN Home</div>;
+  return (
+    <>
+      <TodoComp />
+    </>
+  );
 };
 
 export default AdminHome;

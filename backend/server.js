@@ -17,25 +17,13 @@ const initializePassport = require("./config/passportSetup.js");
 
 //#endregion
 
-//#region config
-
-//#endregion
 const port = process.env.PORT || 5000;
 const app = express();
 initializePassport(passport);
 db();
 app.use(compression());
 app.use(helmet());
-
-const corsOptions = {
-  origin: ["http://localhost:3000", "https://localhost:3000", "localhost:3000"],
-  methods: "GET,POST,DELETE,PUT",
-  allowedHeaders: ["Content-Type"],
-  exposedHeaders: ["Content-Type"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -49,17 +37,17 @@ app.use(cookieParser());
 
 app.use(passport.initialize()); // Used to initialize passport
 
-//delete connect-mongodb-session express-session mysql2
-
 const productRouter = require("./routes/product.js");
 const authRouter = require("./routes/auth.js");
 const userRouter = require("./routes/user.js");
+const adminRouter = require("./routes/admin.js");
 app.use("/", productRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
-
+app.use("/admin", adminRouter);
 app.get("/", (req, res) => {
-  return res.send("Hello world");
+  const responseMessage = "Hello world\n"; // "\n" yeni satır ekler
+  res.send(responseMessage);
 });
 
 const server = http.createServer(app);

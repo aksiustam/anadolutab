@@ -1,11 +1,11 @@
 const express = require("express");
-const passport = require("passport");
+
 const {
   forgotPassword,
   resetPassword,
   userDetail,
 } = require("../controllers/user.js");
-const authenticateWithJwt = require("../middleware/jwt.js");
+const { authenticateWithJwt } = require("../middleware/jwt.js");
 const { checkIsInRole } = require("../middleware/auth.js");
 const router = express.Router();
 

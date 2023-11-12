@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import logo from "../Public/logo.jpg";
+import { NavLink, useNavigate } from "react-router-dom";
+
 import {
   Navbar,
   Collapse,
@@ -25,6 +25,9 @@ import {
   PowerIcon,
   Bars3Icon,
 } from "@heroicons/react/24/outline";
+import { useDispatch, useSelector } from "react-redux";
+import { setLogout } from "../redux/userSlice";
+import { useCookies } from "react-cookie";
 
 const Header = () => {
   return <ComplexNavbar />;
@@ -33,9 +36,17 @@ const Header = () => {
 // profile menu component
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const { isAuth } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const closeMenu = () => setIsMenuOpen(false);
-
+  const [, , removeCookie] = useCookies(["jwt"]);
+  const logout = () => {
+    removeCookie("jwt");
+    dispatch(setLogout());
+    navigate("/");
+    window.location.reload();
+  };
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
@@ -46,57 +57,81 @@ function ProfileMenu() {
         >
           <Avatar
             variant="circular"
-            size="sm"
+            size="md"
             alt="tania andrew"
-            className="rounded-full border border-gray-900 p-0.5 w-[60px]"
+            className="rounded-full border border-gray-900 p-0.5 "
             src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
           />
           <ChevronDownIcon
             strokeWidth={5.5}
-            className={`h-12 w-4 transition-transform ${
+            className={`h-12 w-4 text-white transition-transform ${
               isMenuOpen ? "rotate-180" : ""
             }`}
           />
         </Button>
       </MenuHandler>
-      <MenuList className="p-3 bg-green-700 border-none">
-        <MenuItem
-          onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
-        >
-          <UserCircleIcon className="h-6 w-6" />
-          <NavLink to={"/Profil"} className={"text-lg"}>
-            Profil
-          </NavLink>
-        </MenuItem>
-        <MenuItem
-          onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
-        >
-          <EnvelopeIcon className="h-6 w-6" />
-          <NavLink to={"/Profil/Mesajlar"} className={"text-lg"}>
-            Mesajlar
-          </NavLink>
-        </MenuItem>
-        <MenuItem
-          onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
-        >
-          <NewspaperIcon className="h-6 w-6" />
-          <NavLink to={"/Profil/Makale"} className={"text-lg"}>
-            Makaleler
-          </NavLink>
-        </MenuItem>
-        <MenuItem
-          onClick={closeMenu}
-          className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
-        >
-          <PowerIcon className="h-6 w-6" />
-          <NavLink to={"/Çıkış"} className={"text-lg"}>
-            Çıkış
-          </NavLink>
-        </MenuItem>
-      </MenuList>
+      {isAuth ? (
+        <MenuList className=" bg-green-700 border-none">
+          <MenuItem
+            onClick={closeMenu}
+            className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
+          >
+            <UserCircleIcon className="h-6 w-6" />
+            <NavLink to={"/Profil"} className={"text-base"}>
+              Profil
+            </NavLink>
+          </MenuItem>
+          <MenuItem
+            onClick={closeMenu}
+            className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
+          >
+            <EnvelopeIcon className="h-6 w-6" />
+            <NavLink to={"/Profil/Mesajlar"} className={"text-base"}>
+              Mesajlar
+            </NavLink>
+          </MenuItem>
+          <MenuItem
+            onClick={closeMenu}
+            className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
+          >
+            <NewspaperIcon className="h-6 w-6" />
+            <NavLink to={"/Profil/Makale"} className={"text-base"}>
+              Makaleler
+            </NavLink>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              logout();
+            }}
+            className={`flex items-center my-1 gap-3 rounded text-gray-200 hover:text-gray-100`}
+          >
+            <PowerIcon className="h-6 w-6" />
+            <Typography className="text-base">Çıkış</Typography>
+          </MenuItem>
+        </MenuList>
+      ) : (
+        <MenuList className=" bg-green-700 border-none  ">
+          <MenuItem
+            onClick={closeMenu}
+            className={`flex items-center my-1 gap-3 rounded-lg  text-gray-200 hover:text-gray-100`}
+          >
+            <UserCircleIcon className="h-6 w-6" />
+            <NavLink to={"/Auth/Login"} className={"text-base"}>
+              Giriş Yap
+            </NavLink>
+          </MenuItem>
+          <MenuItem
+            onClick={closeMenu}
+            className={`flex items-center my-1 gap-3 rounded-lg  text-gray-200 hover:text-gray-100`}
+          >
+            <UserCircleIcon className="h-6 w-6" />
+            <NavLink to={"/Auth/Register"} className={"text-base"}>
+              Kayıt Ol
+            </NavLink>
+          </MenuItem>
+        </MenuList>
+      )}
     </Menu>
   );
 }
@@ -110,17 +145,18 @@ function NavListMenu() {
     <React.Fragment>
       <Menu allowHover open={isMenuOpen} handler={setIsMenuOpen}>
         <MenuHandler>
-          <Typography as="a" variant="small" className="font-normal">
-            <MenuItem className="hidden items-center gap-2  lg:flex lg:rounded-full">
-              <NewspaperIcon className="h-[18px] w-[18px]" /> Haberler
-              <ChevronDownIcon
-                strokeWidth={2}
-                className={`h-3 w-3 transition-transform ${
-                  isMenuOpen ? "rotate-180" : ""
-                }`}
-              />
-            </MenuItem>
-          </Typography>
+          <MenuItem className="hidden items-center gap-2  lg:flex lg:rounded-full">
+            <NewspaperIcon className="h-[18px] w-[18px]" />{" "}
+            <Typography as="a" variant="small" className="font-normal">
+              Haberler
+            </Typography>
+            <ChevronDownIcon
+              strokeWidth={2}
+              className={`h-3 w-3 transition-transform ${
+                isMenuOpen ? "rotate-180" : ""
+              }`}
+            />
+          </MenuItem>
         </MenuHandler>
         <MenuList className="hidden gap-3 bg-green-700 lg:flex border-none">
           <ul className=" flex w-full flex-col gap-3 mt-1">
@@ -148,27 +184,39 @@ function NavListMenu() {
           </ul>
         </MenuList>
       </Menu>
-      <MenuItem className="flex -mt-3 items-center gap-2 text-blue-gray-900 lg:hidden">
-        <NewspaperIcon className="h-[18px] w-[18px]" /> Haberler
+      <MenuItem className="flex  items-center gap-2 text-gray-200 lg:hidden">
+        <NewspaperIcon className="h-[18px] w-[18px]" />{" "}
+        <Typography as="a" variant="small" className="font-normal">
+          Haberler
+        </Typography>
       </MenuItem>
-      <ul className="ml-10 flex w-full flex-col gap-1 lg:hidden">
+      <ul className="ml-10 flex w-full flex-col  lg:hidden">
         <MenuItem>
           <NavLink to={"/Haberler"}>
-            <Typography className="font-normal mb-1 text-left text-gray-200">
+            <Typography
+              className="font-normal mb-1 text-left text-gray-200"
+              variant="small"
+            >
               Sektörden Haberler
             </Typography>
           </NavLink>
         </MenuItem>
         <MenuItem>
           <NavLink to={"/Haberler"}>
-            <Typography className="font-normal mb-1 text-left  text-gray-200">
+            <Typography
+              className="font-normal mb-1 text-left  text-gray-200"
+              variant="small"
+            >
               Köşe Yazıları
             </Typography>
           </NavLink>
         </MenuItem>
         <MenuItem>
           <NavLink to={"/Haberler"}>
-            <Typography className="font-normal mb-1 text-left  text-gray-200">
+            <Typography
+              className="font-normal mb-1 text-left  text-gray-200"
+              variant="small"
+            >
               Bilimsel Makaleler
             </Typography>
           </NavLink>
@@ -182,42 +230,43 @@ function NavListMenu() {
 function NavList() {
   return (
     <ul className="mb-4 mt-2 gap-2 flex flex-col lg:gap-3  lg:mb-0 lg:mt-0 lg:flex-row lg:items-start ">
-      <Typography as="a" variant="small" className="font-normal">
-        <NavLink to={"/"}>
-          <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <HomeIcon className="h-[18px] w-[18px]" />
+      <NavLink to={"/"}>
+        <MenuItem className="flex items-center gap-2 lg:rounded-full">
+          <HomeIcon className="h-[18px] w-[18px]" />
+          <Typography variant="small" className="font-normal">
             Anasayfa
-          </MenuItem>
-        </NavLink>
-      </Typography>
+          </Typography>
+        </MenuItem>
+      </NavLink>
 
-      <Typography as="a" variant="small" className="font-normal">
-        <NavLink to={"/Hakkımızda"}>
-          <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <InformationCircleIcon className="h-[18px] w-[18px]" />
+      <NavLink to={"/Hakkımızda"}>
+        <MenuItem className="flex items-center gap-2 lg:rounded-full">
+          <InformationCircleIcon className="h-[18px] w-[18px]" />
+          <Typography variant="small" className="font-normal">
             Hakkımızda
-          </MenuItem>
-        </NavLink>
-      </Typography>
+          </Typography>
+        </MenuItem>
+      </NavLink>
 
       <NavListMenu />
 
-      <Typography as="a" variant="small" className="font-normal">
-        <NavLink to={"/Borsa"}>
-          <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <ChartBarIcon className="h-[18px] w-[18px]" />
+      <NavLink to={"/Borsa"}>
+        <MenuItem className="flex items-center gap-2 lg:rounded-full">
+          <ChartBarIcon className="h-[18px] w-[18px]" />
+          <Typography variant="small" className="font-normal">
             Borsa
-          </MenuItem>
-        </NavLink>
-      </Typography>
-      <Typography as="a" variant="small" className="font-normal">
-        <NavLink to={"/İletişim"}>
-          <MenuItem className="flex items-center gap-2 lg:rounded-full">
-            <PhoneIcon className="h-[18px] w-[18px]" />
+          </Typography>
+        </MenuItem>
+      </NavLink>
+
+      <NavLink to={"/İletişim"}>
+        <MenuItem className="flex items-center gap-2 lg:rounded-full">
+          <PhoneIcon className="h-[18px] w-[18px]" />
+          <Typography variant="small" className="font-normal">
             İletişim
-          </MenuItem>
-        </NavLink>
-      </Typography>
+          </Typography>
+        </MenuItem>
+      </NavLink>
     </ul>
   );
 }
@@ -239,19 +288,9 @@ function ComplexNavbar() {
       <div className="relative mx-auto flex items-center text-gray-200 ">
         <NavLink to={"/"}>
           <div className="flex flex-col relative items-center justify-center">
-            <img className="w-24 absolute  ml-5" src={logo} alt="logo" />
             <div className="flex flex-col ml-5">
-              <Typography
-                as="a"
-                className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-left"
-              >
-                Anadolu Tıbbi
-              </Typography>
-              <Typography
-                as="a"
-                className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-left"
-              >
-                Aromatik Bitkiler
+              <Typography className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-left">
+                Anadolu Tıbbi Bitkiler Platformu
               </Typography>
             </div>
           </div>

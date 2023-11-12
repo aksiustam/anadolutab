@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 import { Card, Typography, Input, Button } from "@material-tailwind/react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/userSlice";
-import { useEffect } from "react";
-import { useCookies } from "react-cookie";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const [cookies, setCookie] = useCookies(["jwt"]);
   const [eError, setEError] = useState();
-  const { user, token, isAuth, error, loading } = useSelector(
-    (state) => state.user
-  );
+  const { user, isAuth, error, loading } = useSelector((state) => state.user);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -24,7 +17,7 @@ const Login = () => {
     setData({ ...data, [name]: value });
   };
 
-  const onSignin = () => {
+  const onSignin = async () => {
     const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
     if (!data.email.match(regex)) {
@@ -36,35 +29,25 @@ const Login = () => {
       return;
     }
     setEError(false);
-    if (!cookies?.jwt) dispatch(login(data));
+    await dispatch(login(data));
   };
 
-  useEffect(() => {
-    if (isAuth) {
-      let expires = new Date();
-      expires.setTime(expires.getTime() + 60 * 60 * 24 * 7 * 1000);
-      setCookie("jwt", token, { path: "/", expires: expires });
-      setTimeout(function () {
-        navigate("/");
-      }, 3000);
-    }
-  }, [isAuth, navigate, setCookie, token]);
   return (
     <div className="flex items-center justify-center">
       <Card color="transparent" shadow={false} className="p-5">
         <Typography variant="h4" color="blue-gray">
           Giriş Yap
         </Typography>
-
-        <Typography color="red">
+        <div className="text-red-900">
           {isAuth
-            ? "Hoşgeldiniz..." + user.name
+            ? "Sektörün Merkezine Hoş Geldiniz " + user.name
             : loading
             ? "Loading..."
             : eError
             ? eError
             : error?.message}
-        </Typography>
+        </div>
+
         <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
           <div className="mb-4 flex flex-col gap-6">
             <Input onChange={onChange} name="email" size="lg" label="Email" />

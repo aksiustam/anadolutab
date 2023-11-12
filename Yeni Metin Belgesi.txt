@@ -1,0 +1,46 @@
+ürünler + açıklama sayfası... + ekle çıkarma update 
+adı
+latince
+kullanılan kısmı
+kategorileri
+etkili bileşeni
+önceki şimdiki sonraki fiyatı array 
+bilgi referans string link 
+üretici alış satış 
+referans satış yorumu 
+ ->Üyeler adı soyadı adresi firması telefon köyüne yorumu tarihi 
+
+
+
+
+{
+    "name" : "Fesleğen",
+    "latinname" : "Ocimum basilicum",
+    "usedtype" : "yaprak",
+    "stock" : "5",
+    "category": "DESC",
+    "ingredient" : "Yok",
+    "description" : "Güzel Yemek lerde kullanılır.",
+    "price" : [ { "date" : "2023" , "pricein" : "7.30"}]
+
+}
+
+
+Üyeler / Editörler / adminler
+
+adı Soyadı
+email
+Adresi
+avatar resmi
+Sirketse şirketi
+Telefonu
+Belirtmek istediğiniz Not 
+Makale id 
+
+
+Makaleler
+herşey
+
+
+
+

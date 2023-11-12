@@ -10,7 +10,7 @@ const Loading = ({ loading, children }) => {
 };
 
 const mapStateToProps = (state) => ({
-  loading: state.user.authloading,
+  loading: state.user.pageLoading,
 });
 
 export default connect(mapStateToProps)(Loading);
