@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getProductDetail } from "../redux/productSlice";
 import Slider from "react-slick";
-import { Button, Typography } from "@material-tailwind/react";
+import { Typography } from "@material-tailwind/react";
 import fidan from "../Public/fidan.jpg";
 const Detail = () => {
   const { id } = useParams();
@@ -61,16 +61,7 @@ const Detail = () => {
           ))}
         </div>
 
-        {product?.stock > 0 ? (
-          <div className="text-xl">Stok Sayısı: {product?.stock}</div>
-        ) : (
-          <div>Ürün Stoklarda yoktur.</div>
-        )}
         <Typography variant="paragraph">{product?.description}</Typography>
-
-        <div>
-          <Button>Sepete Ekle</Button>
-        </div>
       </div>
     </div>
   );

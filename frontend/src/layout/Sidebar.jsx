@@ -6,13 +6,13 @@ import { Typography } from "@material-tailwind/react";
 const Sidebar = () => {
   return (
     <>
-      <div className="flex">
-        <div className="mt-10 mx-5 w-3/4">
+      <div className="flex flex-col lg:flex-row ">
+        <div className="flex mt-10 mx-5 lg:w-3/4">
           <Outlet />
         </div>
         {/* ÜYE OLMAYANLAR GÖRMEYECEKKKKK  Üye Editor Firma Admin */}
-        <div className="mt-10 mx-5 w-1/4">
-          <div className="flex flex-col items_center justify-center sm:w-[250px] h-fit p-5  bg-gray-100 border-2 ">
+        <div className="lg:w-1/4 flex-col lg:flex mt-10 mx-5 ">
+          <div className="flex flex-col items_center justify-center  p-5  bg-gray-100 border-2 ">
             <Typography variant="lead" className="text-2xl text-center">
               Sektöre Ulaşım
             </Typography>

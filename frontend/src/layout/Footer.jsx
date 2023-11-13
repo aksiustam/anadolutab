@@ -1,40 +1,17 @@
 import React from "react";
 import { Typography } from "@material-tailwind/react";
-
+import sponsor1 from "../Public/Sponsor/sponsor-1.png";
+import sponsor2 from "../Public/Sponsor/sponsor-2.png";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   //SPONSORLARIMIZ COPYRİGHT İLETİŞİM ADRES TELEFON SOSYAL MEDYA LİNK
   return (
     <footer className="w-full mt-8 bg-gray-300 p-5">
       <div className="mx-auto w-full max-w-7xl px-8">
-        <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
-          <div className="flex flex-col ">
-            <Typography variant="h5" className="mb-6">
-              Sponsorlarımız
-            </Typography>
-            <div className="flex gap-3 flex-wrap">
-              <img
-                src="https://www.cayfiltresi.com/wp-content/uploads/2023/09/PRATEACO-1.png"
-                alt="sponsor1"
-                className="w-32 h-16 border-2"
-              />
-              <img
-                src="https://scontent.fkya4-1.fna.fbcdn.net/v/t39.30808-6/302281048_494114712723857_759745301896845756_n.png?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=8X2IGrj-u5sAX8PwQlx&_nc_ht=scontent.fkya4-1.fna&oh=00_AfDeB9a4hyGyfEscj76QyjuurNidIHBY8X3qHyDphj4z7A&oe=6545E990"
-                alt="sponsor2"
-                className="w-20 h-16 border-2"
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <Typography variant="h6" className="mb-6">
-              İletişim
-            </Typography>
-
-            <div>
-              Kültür mah. Akar sok. Adakent 3 Sitesi No:8D Nilüfer/Bursa
-            </div>
-
-            <div>05443456359</div>
+        <div className="justify-between gap-4 ">
+          <div className="flex gap-3 flex-wrap">
+            <img src={sponsor1} alt="sponsor1" className="w-64 h-32 " />
+            <img src={sponsor2} alt="sponsor2" className="w-36 h-32 " />
           </div>
         </div>
         <div className="mt-12 flex w-full flex-col items-center justify-center border-t border-blue-gray-50 py-4 md:flex-row md:justify-between">
@@ -43,8 +20,10 @@ const Footer = () => {
             className="mb-4 text-center font-normal text-blue-gray-900 md:mb-0"
           >
             &copy; {currentYear}{" "}
-            <a href="https://github.com/aksiustam">Selahattin Yılmaz</a>. All
-            Rights Reserved.
+            <a href="https://www.facebook.com/selahattin.yilmaz.150">
+              Selahattin Yılmaz
+            </a>
+            . All Rights Reserved.
           </Typography>
           <div className="flex gap-4 text-blue-gray-900 sm:justify-center">
             <Typography
